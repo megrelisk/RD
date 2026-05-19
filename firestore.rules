@@ -1,0 +1,53 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isString(v) { return v is string && v.size() > 0 && v.size() < 5000; }
+
+    // Public read for landing-page content collections
+    match /site/{doc}                 { allow read: if true; allow write: if isAdmin(); }
+    match /stats/{doc}                { allow read: if true; allow write: if isAdmin(); }
+    match /socials/{doc}              { allow read: if true; allow write: if isAdmin(); }
+    match /audienceRegions/{doc}      { allow read: if true; allow write: if isAdmin(); }
+    match /audienceDemographics/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /videos/{doc}               { allow read: if true; allow write: if isAdmin(); }
+    match /gallery/{doc}              { allow read: if true; allow write: if isAdmin(); }
+    match /packages/{doc}             { allow read: if true; allow write: if isAdmin(); }
+    match /gearZones/{doc}            { allow read: if true; allow write: if isAdmin(); }
+    match /sponsors/{doc}             { allow read: if true; allow write: if isAdmin(); }
+    match /testimonials/{doc}         { allow read: if true; allow write: if isAdmin(); }
+    match /press/{doc}                { allow read: if true; allow write: if isAdmin(); }
+    match /achievements/{doc}         { allow read: if true; allow write: if isAdmin(); }
+
+    // Lead submissions — anyone can create with validation; admin reads/manages
+    match /leads/{id} {
+      allow create: if
+        isString(request.resource.data.company) &&
+        isString(request.resource.data.contactName) &&
+        isString(request.resource.data.email) &&
+        isString(request.resource.data.budget) &&
+        isString(request.resource.data.message);
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Media kit requests — anyone can create; admin reads
+    match /mediaKitRequests/{id} {
+      allow create: if
+        isString(request.resource.data.email) &&
+        isString(request.resource.data.company);
+      allow read, delete: if isAdmin();
+    }
+
+    // Admins collection — admin-only read; never client-writable
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false; // manage via Firebase console only
+    }
+  }
+}

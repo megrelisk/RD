@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes create-next-app@latest fighter-landing --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --eslint --turbopack --use-npm --yes)",
+      "PowerShell(Move-Item -Destination \"F:\\\\RD\" -Force)",
+      "Bash(npm install *)",
+      "Bash(npm list *)",
+      "Bash(node -e \"const lr = require\\('lucide-react'\\); console.log\\('Sample icons:', Object.keys\\(lr\\).slice\\(0,10\\).join\\(', '\\)\\)\")",
+      "Bash(npx --yes shadcn@latest init --yes --base-color zinc)",
+      "Bash(npx --yes shadcn@latest init --yes)",
+      "Bash(npx --yes shadcn@latest init --yes -d)",
+      "Bash(npx --yes shadcn@latest add button input label dialog form select textarea card badge tabs table dropdown-menu sheet popover toast sonner separator alert avatar checkbox switch progress)",
+      "Bash(npx --yes shadcn@latest add button input label dialog form select textarea card badge tabs table dropdown-menu sheet popover sonner separator alert avatar checkbox switch progress)",
+      "Bash(npx --yes shadcn@latest add form)",
+      "Bash(npx --yes shadcn@latest add form --yes)",
+      "Bash(npm --prefix F:/RD list @radix-ui/react-slot)",
+      "Bash(npx tsc *)",
+      "Bash(node -e \"const lr = require\\('lucide-react'\\); const test = ['Facebook','Instagram','Twitter','Youtube','Mail','Activity','Eye','TrendingUp','Zap','Globe','Video']; test.forEach\\(n => console.log\\(n, '→', typeof lr[n]\\)\\);\")",
+      "Bash(node -e \"const lr = require\\('lucide-react'\\); const all = Object.keys\\(lr\\); console.log\\(all.filter\\(k => /instagram|facebook|youtube|twitter|tiktok/i.test\\(k\\)\\).join\\('\\\\n'\\)\\);\")",
+      "Bash(npm run *)",
+      "Bash(curl -sS -o nul -w \"HTTP %{http_code}  %{size_download} bytes  %{time_total}s\\\\n\" http://localhost:3000/)",
+      "Bash(curl -sS http://localhost:3000/)",
+      "Bash(curl -sS -o nul -w \"/admin: HTTP %{http_code}\\\\n\" http://localhost:3000/admin)",
+      "Bash(curl -sS -o nul -w \"/admin/login: HTTP %{http_code}\\\\n\" http://localhost:3000/admin/login)",
+      "Bash(curl -sS -o nul -w \"/api/leads \\(GET\\): HTTP %{http_code}\\\\n\" http://localhost:3000/api/leads)",
+      "Bash(curl -sS -X POST -H \"Content-Type: application/json\" -d \"{\\\\\"invalid\\\\\":true}\" -o nul -w \"/api/leads \\(bad POST\\): HTTP %{http_code}\\\\n\" http://localhost:3000/api/leads)",
+      "Bash(grep -oE '\\(\"?\\(\\\\$?\\(14\\\\.8M|2\\\\.4M|47M|1\\\\.8M|14,800,000|2,400,000|47,000,000|1,800,000\\)\"?\\)|truncate|tabular-nums\\)')"
+    ]
+  }
+}
