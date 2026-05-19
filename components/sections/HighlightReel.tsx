@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Play } from "lucide-react";
 import Image from "next/image";
 
@@ -15,6 +15,30 @@ function youtubeThumb(id: string) {
   return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 }
 
+function VideoThumb({ src, className }: { src: string; className?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  const handleMeta = () => {
+    if (!ref.current) return;
+    const d = ref.current.duration;
+    if (d && isFinite(d)) {
+      ref.current.currentTime = d * (0.1 + Math.random() * 0.3);
+    }
+  };
+
+  return (
+    <video
+      ref={ref}
+      src={src}
+      muted
+      playsInline
+      preload="metadata"
+      onLoadedMetadata={handleMeta}
+      className={cn("object-cover w-full h-full", className)}
+    />
+  );
+}
+
 export function HighlightReel({ videos }: Props) {
   const featured = videos.find((v) => v.featured) ?? videos[0];
   const rest = videos.filter((v) => v !== featured).slice(0, 4);
@@ -23,9 +47,9 @@ export function HighlightReel({ videos }: Props) {
 
   if (!featured) return null;
 
-  const thumb =
-    selected?.thumbnailUrl ||
-    (selected?.youtubeId ? youtubeThumb(selected.youtubeId) : `https://picsum.photos/seed/reel/1600/900`);
+  const hasYoutube = Boolean(selected?.youtubeId);
+  const hasVideo = Boolean(selected?.videoUrl);
+  const thumb = selected?.thumbnailUrl || (hasYoutube ? youtubeThumb(selected!.youtubeId!) : null);
 
   return (
     <section id="highlights" className="relative bg-black">
@@ -45,23 +69,37 @@ export function HighlightReel({ videos }: Props) {
 
         <Reveal delay={0.1}>
           <div className="relative aspect-video w-full overflow-hidden blood-border bg-black group">
-            {playing && selected?.youtubeId ? (
+            {playing && hasYoutube ? (
               <iframe
-                src={`https://www.youtube.com/embed/${selected.youtubeId}?autoplay=1&modestbranding=1&rel=0`}
-                title={selected.title}
+                src={`https://www.youtube.com/embed/${selected!.youtubeId}?autoplay=1&modestbranding=1&rel=0`}
+                title={selected!.title}
                 allow="autoplay; encrypted-media; picture-in-picture"
                 allowFullScreen
                 className="absolute inset-0 w-full h-full"
               />
+            ) : playing && hasVideo ? (
+              <video
+                src={selected!.videoUrl!}
+                autoPlay
+                controls
+                playsInline
+                className="absolute inset-0 w-full h-full object-contain bg-black"
+              />
             ) : (
               <>
-                <Image
-                  src={thumb}
-                  alt={selected?.title || "Highlight"}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 1280px"
-                  className="object-cover"
-                />
+                <div className="absolute inset-0">
+                  {thumb ? (
+                    <Image
+                      src={thumb}
+                      alt={selected?.title || "Highlight"}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 1280px"
+                      className="object-cover"
+                    />
+                  ) : hasVideo ? (
+                    <VideoThumb src={selected!.videoUrl!} />
+                  ) : null}
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
                 <button
                   type="button"
@@ -91,24 +129,26 @@ export function HighlightReel({ videos }: Props) {
           </div>
         </Reveal>
 
-        {/* Sub videos */}
         {rest.length > 0 && (
           <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
             {rest.map((v) => {
-              const t = v.thumbnailUrl || (v.youtubeId ? youtubeThumb(v.youtubeId) : `https://picsum.photos/seed/${v.title}/600/400`);
+              const t = v.thumbnailUrl || (v.youtubeId ? youtubeThumb(v.youtubeId) : null);
               return (
                 <button
                   key={v.title}
-                  onClick={() => {
-                    setSelected(v);
-                    setPlaying(false);
-                  }}
+                  onClick={() => { setSelected(v); setPlaying(false); }}
                   className={cn(
                     "group relative aspect-video overflow-hidden border-2 transition-all",
                     selected === v ? "border-[#dc143c]" : "border-white/10 hover:border-[#dc143c]/60",
                   )}
                 >
-                  <Image src={t} alt={v.title} fill sizes="25vw" className="object-cover" />
+                  <div className="absolute inset-0">
+                    {t ? (
+                      <Image src={t} alt={v.title} fill sizes="25vw" className="object-cover" />
+                    ) : v.videoUrl ? (
+                      <VideoThumb src={v.videoUrl} />
+                    ) : null}
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-2 left-2 right-2 text-left">
                     <div className="font-mono text-[8px] tracking-[0.3em] uppercase text-[#dc143c]">

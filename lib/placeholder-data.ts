@@ -17,22 +17,22 @@ import type {
 type WithId<T> = T & { id: string };
 
 export const PLACEHOLDER_SITE: Site = {
-  fighterName: "KILLER DOE",
-  nickname: "THE HAMMER",
-  weightClass: "LIGHTWEIGHT — 155 LBS",
-  record: { wins: 18, losses: 2, draws: 0, knockouts: 12, submissions: 4 },
-  tagline: "PUT YOUR LOGO ON THE FIST THAT BREAKS LEGENDS.",
-  heroVideoUrl: "",
+  fighterName: "ROMAN DOLIDZE",
+  nickname: "THE CAUCASIAN",
+  weightClass: "MIDDLEWEIGHT — 185 LBS",
+  record: { wins: 15, losses: 5, draws: 0, knockouts: 8, submissions: 3 },
+  tagline: "PUT YOUR BRAND ON THE FORCE OF THE CAUCASUS.",
+  heroVideoUrl: "https://firebasestorage.googleapis.com/v0/b/dolidze-5cdf0.firebasestorage.app/o/portfoliovids%2Fhero2.MP4?alt=media&token=d1887809-4555-4337-a1f5-137f6b3835aa",
   heroPosterUrl: "",
   nextFightDate: "2026-09-14T22:00:00Z",
   nextFightOpponent: "REAPER MARTINEZ",
   nextFightVenue: "T-MOBILE ARENA, LAS VEGAS",
-  managerEmail: "manager@killerdoe.com",
+  managerEmail: "manager@romandolidze.com",
   managerPhone: "+1 (555) 010-0199",
   managerWhatsapp: "+15550100199",
   mediaKitUrl: "",
   bioShort:
-    "World-ranked finisher with 12 KOs and a global fanbase. When Doe walks to the octagon, millions watch. Make sure your brand is on him when he does.",
+    "UFC Middleweight contender, world-class grappler, and knockout artist from Georgia. A dominant force in the octagon with a global fanbase of millions. Put your brand on Roman as he marches to the championship.",
 };
 
 export const PLACEHOLDER_STATS: WithId<Stat>[] = [

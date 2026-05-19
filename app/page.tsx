@@ -5,10 +5,7 @@ import { Gallery } from "@/components/sections/Gallery";
 import { GearVisualizer } from "@/components/sections/GearVisualizer";
 import { Hero } from "@/components/sections/Hero";
 import { HighlightReel } from "@/components/sections/HighlightReel";
-import { MediaKitDownload } from "@/components/sections/MediaKitDownload";
 import { Navbar } from "@/components/sections/Navbar";
-import { PressBlock } from "@/components/sections/PressBlock";
-import { PriceCalculator } from "@/components/sections/PriceCalculator";
 import { SponsorshipPackages } from "@/components/sections/SponsorshipPackages";
 import { StatsBar } from "@/components/sections/StatsBar";
 import { TrustBlock } from "@/components/sections/TrustBlock";
@@ -33,12 +30,9 @@ export default async function Home() {
       <Gallery items={data.gallery} />
       <SponsorshipPackages packages={data.packages} />
       <GearVisualizer zones={data.gearZones} />
-      <PriceCalculator />
       <AudienceInsights regions={data.regions} demographics={data.demographics} />
       <TrustBlock sponsors={data.sponsors} testimonials={data.testimonials} />
-      <PressBlock press={data.press} achievements={data.achievements} />
       <BookingForm site={data.site} packages={data.packages} />
-      <MediaKitDownload site={data.site} />
       <Footer site={data.site} socials={data.socials} />
     </div>
   );

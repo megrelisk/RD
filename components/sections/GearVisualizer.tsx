@@ -20,7 +20,7 @@ function compact(n: number) {
 
 export function GearVisualizer({ zones, baseImageUrl }: Props) {
   const [active, setActive] = useState<GearZone | null>(zones[0] ?? null);
-  const img = baseImageUrl || `https://picsum.photos/seed/fighterbody/800/1200`;
+  const img = baseImageUrl || `https://firebasestorage.googleapis.com/v0/b/dolidze-5cdf0.firebasestorage.app/o/portfolioimg%2Fmarks.jpg?alt=media&token=118a7279-e524-4aad-833d-d2fc3ef104e5`;
 
   return (
     <section id="gear" className="relative bg-gradient-to-b from-black via-[#1a0000]/30 to-black">

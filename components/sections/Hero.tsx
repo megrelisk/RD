@@ -31,7 +31,7 @@ export function Hero({ site, socials }: Props) {
             loop
             playsInline
             poster={site.heroPosterUrl || undefined}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-[center_20%]"
           >
             <source src={site.heroVideoUrl} />
           </video>
@@ -67,7 +67,7 @@ export function Hero({ site, socials }: Props) {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 mx-auto flex min-h-[90svh] max-w-7xl flex-col justify-end px-6 md:px-12 pb-16 md:pb-24">
+      <div className="relative z-10 flex min-h-[90svh] w-full flex-col justify-end pl-5 pr-6 md:pr-12 pb-16 md:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -76,21 +76,21 @@ export function Hero({ site, socials }: Props) {
         >
           <div className="flex items-center gap-3 font-mono text-xs tracking-[0.3em] uppercase text-[#dc143c]">
             <span className="h-px w-12 bg-[#dc143c]" />
-            <span>UFC LIGHTWEIGHT — RANKED #3 P4P</span>
+            <span>UFC Middleweight — RANKED TOP 15</span>
           </div>
 
           <h1 className="font-display leading-[0.85] tracking-tighter">
             <GlitchText
               as="div"
-              className="block text-[18vw] md:text-[12vw] lg:text-[10vw] text-white"
+              className="block text-[15vw] md:text-[10vw] lg:text-[8.5vw] text-white"
             >
               {site.fighterName.split(" ")[0] || site.fighterName}
             </GlitchText>
-            <span className="block text-stroke text-[14vw] md:text-[10vw] lg:text-[8vw] mt-[-0.15em]">
+            <span className="block text-stroke text-[8vw] md:text-[6vw] lg:text-[5vw] my-4 md:my-6 whitespace-nowrap tracking-[0.25em] text-center w-screen -ml-5">
               &ldquo;{site.nickname}&rdquo;
             </span>
             {site.fighterName.split(" ").slice(1).join(" ") && (
-              <span className="block text-white text-[18vw] md:text-[12vw] lg:text-[10vw] mt-[-0.1em]">
+              <span className="block text-white text-[15vw] md:text-[10vw] lg:text-[8.5vw]">
                 {site.fighterName.split(" ").slice(1).join(" ")}
               </span>
             )}

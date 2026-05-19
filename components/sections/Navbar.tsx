@@ -19,6 +19,9 @@ const NAV = [
 export function Navbar({ fighterName }: { fighterName: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
+
+  const logoUrl = `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "dolidze-5cdf0.firebasestorage.app"}/o/logo%2Flogo.png?alt=media&token=0d9b46a3-893a-41a3-aebd-6e1bc468b992`;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 120);
@@ -35,9 +38,26 @@ export function Navbar({ fighterName }: { fighterName: string }) {
           : "bg-transparent border-transparent",
       )}
     >
-      <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-        <a href="#top" className="font-display text-xl tracking-wider text-white hover:text-[#dc143c] transition-colors">
-          <span className="text-[#dc143c]">●</span> {fighterName.split(" ")[0]}
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <a
+          href="#top"
+          className="flex items-center gap-2 font-display text-xl tracking-wider text-white hover:text-[#dc143c] transition-colors animate-fade-in"
+        >
+          {!logoError ? (
+            <div className="relative h-8 flex items-center justify-center overflow-hidden">
+              <img
+                src={logoUrl}
+                alt={`${fighterName} Logo`}
+                className="h-full w-auto object-contain"
+                onError={() => setLogoError(true)}
+              />
+            </div>
+          ) : (
+            <>
+              <span className="text-[#dc143c]">●</span>
+              <span>{fighterName.split(" ")[0]}</span>
+            </>
+          )}
         </a>
 
         <ul className="hidden lg:flex items-center gap-2">
@@ -45,7 +65,7 @@ export function Navbar({ fighterName }: { fighterName: string }) {
             <li key={n.href}>
               <a
                 href={n.href}
-                className="px-3 py-2 font-mono text-[10px] tracking-[0.3em] uppercase text-white/70 hover:text-[#dc143c] transition-colors"
+                className="px-3 py-2 font-mono text-[20px] tracking-[0.3em] uppercase text-white/70 hover:text-[#dc143c] transition-colors"
               >
                 {n.label}
               </a>

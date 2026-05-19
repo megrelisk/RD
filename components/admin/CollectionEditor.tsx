@@ -41,7 +41,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaUploader } from "./MediaUploader";
 
 export function CollectionEditor<T extends Record<string, unknown>>({
@@ -273,18 +272,18 @@ function FieldInput({
       );
     case "select":
       return (
-        <Select value={(value as string) ?? ""} onValueChange={onChange}>
-          <SelectTrigger className="bg-black border-white/20 rounded-none">
-            <SelectValue placeholder="SELECT" />
-          </SelectTrigger>
-          <SelectContent className="rounded-none">
-            {field.options?.map((opt) => (
-              <SelectItem key={opt} value={opt}>
-                {opt}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <select
+          value={(value as string) ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full h-10 bg-black border border-white/20 font-mono text-sm text-white px-3 focus:border-[#dc143c] focus:outline-none appearance-none cursor-pointer"
+        >
+          <option value="" disabled className="bg-black">SELECT</option>
+          {field.options?.map((opt) => (
+            <option key={opt} value={opt} className="bg-black uppercase">
+              {opt}
+            </option>
+          ))}
+        </select>
       );
     case "image":
       return (

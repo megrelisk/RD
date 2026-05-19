@@ -18,36 +18,23 @@ const iconMap = {
 export function Footer({ site, socials }: Props) {
   return (
     <footer className="relative bg-black border-t-2 border-[#dc143c]/40 overflow-hidden">
-      {/* Giant fighter name watermark */}
-      <div className="absolute inset-x-0 -bottom-12 md:-bottom-24 pointer-events-none select-none overflow-hidden">
+      {/* Giant fighter name — fills entire footer */}
+      <div className="absolute inset-0 pointer-events-none select-none flex flex-col items-center justify-center overflow-hidden">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1.2 }}
-          className="font-display text-stroke text-[28vw] leading-[0.8] text-center tracking-tighter"
+          className="font-display text-stroke leading-none text-center tracking-tighter uppercase w-full"
+          style={{ fontSize: "clamp(60px, 17vw, 280px)" }}
         >
-          {site.fighterName.split(" ").join("")}
+          <div>{site.fighterName.split(" ")[0]}</div>
+          <div>{site.fighterName.split(" ").slice(1).join(" ")}</div>
         </motion.div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-3 gap-12 mb-12">
-          {/* Pitch */}
-          <div>
-            <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#dc143c] mb-3">
-              ◆ OFFICIAL SPONSORSHIP HUB
-            </div>
-            <div className="font-display text-3xl text-white leading-none mb-4">
-              {site.fighterName}
-              <br />
-              <span className="blood-text">&ldquo;{site.nickname}&rdquo;</span>
-            </div>
-            <p className="font-mono text-xs text-white/60 uppercase tracking-wider leading-relaxed">
-              » {site.bioShort}
-            </p>
-          </div>
-
+        <div className="grid lg:grid-cols-2 gap-12 mb-12">
           {/* Contact */}
           <div>
             <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#dc143c] mb-3">

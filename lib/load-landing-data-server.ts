@@ -79,9 +79,21 @@ function hasAdminConfig() {
   );
 }
 
+function serialize<T>(data: T): T {
+  return JSON.parse(JSON.stringify(data, (_key, val) => {
+    if (val && typeof val === "object" && "_seconds" in val && "_nanoseconds" in val) {
+      return new Date(val._seconds * 1000).toISOString();
+    }
+    if (val && typeof val === "object" && val.constructor?.name === "Timestamp") {
+      return val.toDate().toISOString();
+    }
+    return val;
+  }));
+}
+
 async function listOrdered<T>(name: string): Promise<WithId<T>[]> {
   const snap = await adminDb().collection(name).orderBy("order", "asc").get();
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as T) }));
+  return snap.docs.map((d) => serialize({ id: d.id, ...(d.data() as T) }));
 }
 
 export async function loadLandingDataServer(): Promise<LandingData> {
@@ -119,7 +131,7 @@ export async function loadLandingDataServer(): Promise<LandingData> {
       listOrdered<Achievement>(COLLECTIONS.achievements),
     ]);
 
-    const site = siteDoc.exists ? (siteDoc.data() as Site) : PLACEHOLDER_SITE;
+    const site = siteDoc.exists ? serialize(siteDoc.data() as Site) : PLACEHOLDER_SITE;
 
     return {
       site,

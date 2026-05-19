@@ -14,9 +14,11 @@ export function TrustBlock({ sponsors, testimonials }: Props) {
   return (
     <section id="trust" className="relative bg-black">
       <SectionDivider label="TRUST / PROOF / ROI" number="// 08" />
-      <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
+
+      {/* Heading */}
+      <div className="max-w-7xl mx-auto px-6 pt-16 md:pt-24 pb-12">
         <Reveal>
-          <div className="mb-12 flex items-end justify-between gap-6 flex-wrap">
+          <div className="flex items-end justify-between gap-6 flex-wrap">
             <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-none">
               BRANDS WHO
               <br />
@@ -27,39 +29,44 @@ export function TrustBlock({ sponsors, testimonials }: Props) {
             </p>
           </div>
         </Reveal>
+      </div>
 
-        {/* Sponsor logos marquee */}
-        <div className="mb-12">
-          <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4">
-            PAST & CURRENT PARTNERS
-          </div>
-          <div className="border-y border-[#dc143c]/30 py-6 bg-black/40">
-            <Marquee speed="slow">
-              {sponsors.map((s) => (
-                <div
-                  key={s.name}
-                  className="shrink-0 flex items-center justify-center h-16 w-44 grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100"
-                >
-                  {s.logoUrl ? (
-                    <Image
-                      src={s.logoUrl}
-                      alt={s.name}
-                      width={160}
-                      height={56}
-                      className="object-contain max-h-full"
-                    />
-                  ) : (
-                    <span className="font-display text-3xl text-white/70 tracking-widest">
-                      {s.name}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </Marquee>
-          </div>
+      {/* Full-width sponsor marquee */}
+      <div className="border-y border-[#dc143c]/30 py-6 bg-black/40 mb-12 w-full overflow-hidden">
+        <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4 px-6">
+          PAST &amp; CURRENT PARTNERS
         </div>
+        <Marquee speed="slow">
+          {sponsors.map((s) => (
+            <div
+              key={s.name}
+              className="shrink-0 flex items-center justify-center h-16 w-44 grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100"
+            >
+              {s.logoUrl ? (
+                <Image
+                  src={s.logoUrl}
+                  alt={s.name}
+                  width={160}
+                  height={56}
+                  className="object-contain max-h-full"
+                />
+              ) : (
+                <span className="font-display text-3xl text-white/70 tracking-widest">
+                  {s.name}
+                </span>
+              )}
+            </div>
+          ))}
+          <div className="shrink-0 flex items-center px-12">
+            <span className="font-display text-2xl md:text-3xl text-[#dc143c]/40 tracking-[0.35em] uppercase whitespace-nowrap">
+              THERE IS STRENGTH IN UNITY
+            </span>
+          </div>
+        </Marquee>
+      </div>
 
-        {/* Testimonials */}
+      {/* Testimonials */}
+      <div className="max-w-7xl mx-auto px-6 pb-16 md:pb-24">
         <div className="grid md:grid-cols-3 gap-4">
           {testimonials.map((t, i) => (
             <Reveal key={t.author} delay={i * 0.1}>
