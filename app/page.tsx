@@ -13,7 +13,8 @@ import { CustomCursor } from "@/components/effects/CustomCursor";
 import { KOEasterEgg } from "@/components/effects/KOEasterEgg";
 import { loadLandingDataServer } from "@/lib/load-landing-data-server";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
   const data = await loadLandingDataServer();

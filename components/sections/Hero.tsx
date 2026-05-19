@@ -11,12 +11,6 @@ import type { Site, Social } from "@/lib/schemas";
 
 type Props = { site: Site; socials: Social[] };
 
-function compactNumber(n: number) {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
-  return String(n);
-}
-
 type StatCardProps = { label: string; value: number; accent: boolean; delay: number };
 
 function StatCard({ label, value, accent, delay }: StatCardProps) {
@@ -123,8 +117,7 @@ function StatCard({ label, value, accent, delay }: StatCardProps) {
   );
 }
 
-export function Hero({ site, socials }: Props) {
-  const totalReach = socials.reduce((s, x) => s + x.followers, 0);
+export function Hero({ site }: Props) {
   const isYoutube = site.heroVideoUrl?.includes("youtube") || site.heroVideoUrl?.includes("youtu.be");
 
   const stats = [
@@ -166,22 +159,15 @@ export function Hero({ site, socials }: Props) {
       </div>
 
       {/* Top bar */}
-      <div className="relative z-20 flex items-center justify-between px-6 md:px-12 pt-6">
+      <div className="relative z-20 flex items-center px-6 md:px-12 pt-6">
         <div className="font-mono text-xs tracking-[0.3em] uppercase text-[#dc143c] flex items-center gap-2">
           <span className="inline-block w-2 h-2 bg-[#dc143c] animate-pulse-blood rounded-full" />
           LIVE / SPONSORSHIP HUB
         </div>
-        <div className="hidden md:flex items-center gap-6 font-mono text-[10px] tracking-[0.3em] uppercase text-white/60">
-          <span>EST. {new Date(site.nextFightDate || Date.now()).getFullYear() - 8}</span>
-          <span>•</span>
-          <span>{site.weightClass}</span>
-          <span>•</span>
-          <span>{compactNumber(totalReach)} FOLLOWERS</span>
-        </div>
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 flex min-h-[90svh] w-full flex-col justify-end pl-5 pr-6 md:pr-12 pb-16 md:pb-24">
+      <div className="relative z-10 flex min-h-[90svh] w-full flex-col justify-end pl-5 pr-6 md:pr-12 pt-16 md:pt-24 pb-16 md:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -193,8 +179,8 @@ export function Hero({ site, socials }: Props) {
             <span>UFC Middleweight — RANKED TOP 15</span>
           </div>
 
-          {/* ROMAN + DOLIDZE tight together */}
-          <h1 className="font-display leading-[0.82] tracking-tighter">
+          {/* ROMAN + DOLIDZE — slightly more breathing room */}
+          <h1 className="font-display leading-[0.95] tracking-tighter">
             <GlitchText
               as="div"
               className="block text-[15vw] md:text-[10vw] lg:text-[8.5vw] text-white"
@@ -202,17 +188,37 @@ export function Hero({ site, socials }: Props) {
               {site.fighterName.split(" ")[0] || site.fighterName}
             </GlitchText>
             {site.fighterName.split(" ").slice(1).join(" ") && (
-              <span className="block text-white text-[15vw] md:text-[10vw] lg:text-[8.5vw]">
+              <span className="block text-white text-[15vw] md:text-[10vw] lg:text-[8.5vw] mt-1">
                 {site.fighterName.split(" ").slice(1).join(" ")}
               </span>
             )}
           </h1>
 
-          {/* THE CAUCASIAN — full-width centered, below the name */}
+          {/* THE CAUCASIAN — UFC walkout style pulse */}
           <div className="w-screen -ml-5 text-center mt-8 md:mt-12">
-            <span className="block text-stroke text-[8vw] md:text-[6vw] lg:text-[5vw] whitespace-nowrap tracking-[0.25em]">
+            <motion.span
+              className="block text-stroke text-[8vw] md:text-[6vw] lg:text-[5vw] whitespace-nowrap tracking-[0.25em]"
+              initial={{ opacity: 0, scale: 1.15, filter: "blur(8px)" }}
+              animate={{
+                opacity: [0.25, 0.8, 0.45, 0.8, 0.25],
+                scale: [1, 1.015, 1, 1.015, 1],
+                filter: [
+                  "blur(0px) drop-shadow(0 0 6px rgba(220,20,60,0.25))",
+                  "blur(0px) drop-shadow(0 0 28px rgba(220,20,60,0.95)) drop-shadow(0 0 60px rgba(220,20,60,0.5))",
+                  "blur(0px) drop-shadow(0 0 14px rgba(220,20,60,0.55))",
+                  "blur(0px) drop-shadow(0 0 28px rgba(220,20,60,0.95)) drop-shadow(0 0 60px rgba(220,20,60,0.5))",
+                  "blur(0px) drop-shadow(0 0 6px rgba(220,20,60,0.25))",
+                ],
+              }}
+              transition={{
+                duration: 4.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.25, 0.5, 0.75, 1],
+              }}
+            >
               &ldquo;{site.nickname}&rdquo;
-            </span>
+            </motion.span>
           </div>
 
           {/* 3D Record block */}
