@@ -19,7 +19,7 @@ export default async function Home() {
   const data = await loadLandingDataServer();
 
   return (
-    <div id="top" className="min-h-screen bg-black">
+    <div id="top" className="relative min-h-screen bg-black">
       <Navbar fighterName={data.site.fighterName} />
       <CustomCursor />
       <KOEasterEgg />

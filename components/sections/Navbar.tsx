@@ -1,10 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "#highlights", label: "REEL" },
@@ -17,31 +14,17 @@ const NAV = [
 ];
 
 export function Navbar({ fighterName }: { fighterName: string }) {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
 
   const logoUrl = `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "dolidze-5cdf0.firebasestorage.app"}/o/logo%2Flogo.png?alt=media&token=0d9b46a3-893a-41a3-aebd-6e1bc468b992`;
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 120);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <nav
-      className={cn(
-        "fixed top-0 left-0 right-0 z-40 transition-all duration-300 border-b",
-        scrolled
-          ? "bg-black/90 backdrop-blur-xl border-[#dc143c]/30"
-          : "bg-transparent border-transparent",
-      )}
-    >
+    <nav className="absolute top-0 left-0 right-0 z-40">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <a
           href="#top"
-          className="flex items-center gap-2 font-display text-xl tracking-wider text-white hover:text-[#dc143c] transition-colors animate-fade-in"
+          className="flex items-center gap-2 font-display text-xl tracking-wider text-white hover:text-[#dc143c] transition-colors"
         >
           {!logoError ? (
             <div className="relative h-8 flex items-center justify-center overflow-hidden">
@@ -72,13 +55,6 @@ export function Navbar({ fighterName }: { fighterName: string }) {
             </li>
           ))}
         </ul>
-
-        <Button
-          asChild
-          className="hidden lg:inline-flex h-9 rounded-none font-display tracking-wider bg-[#dc143c] hover:bg-[#ff1744] text-white"
-        >
-          <a href="#book">SPONSOR NOW →</a>
-        </Button>
 
         <button
           type="button"
