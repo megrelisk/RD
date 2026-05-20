@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import * as Icons from "lucide-react";
 import { LucideProps, Activity } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { CountUp } from "@/components/effects/CountUp";
 import { Reveal } from "@/components/effects/Reveal";
@@ -11,40 +11,64 @@ import type { Site, Stat } from "@/lib/schemas";
 
 type Props = { stats: Stat[]; site: Site };
 
-function CountdownPill({ targetIso }: { targetIso?: string }) {
-  const [diff, setDiff] = useState({ d: 0, h: 0, m: 0, s: 0 });
-
-  useEffect(() => {
-    if (!targetIso) return;
-    const target = new Date(targetIso).getTime();
-    const tick = () => {
-      const delta = Math.max(0, target - Date.now());
-      setDiff({
-        d: Math.floor(delta / 86400000),
-        h: Math.floor((delta % 86400000) / 3600000),
-        m: Math.floor((delta % 3600000) / 60000),
-        s: Math.floor((delta % 60000) / 1000),
-      });
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [targetIso]);
-
-  if (!targetIso) return null;
+function DigitBox({ digit, accent, delay }: { digit: string; accent: boolean; delay: number }) {
   return (
-    <div className="font-mono text-xs flex items-center gap-2">
-      {[
-        { v: diff.d, l: "D" },
-        { v: diff.h, l: "H" },
-        { v: diff.m, l: "M" },
-        { v: diff.s, l: "S" },
-      ].map((c) => (
-        <div key={c.l} className="flex flex-col items-center bg-[#dc143c]/10 border border-[#dc143c]/30 px-2 py-1 min-w-[40px]">
-          <span className="text-white text-xl font-display tabular-nums">{String(c.v).padStart(2, "0")}</span>
-          <span className="text-[#dc143c] text-[8px] tracking-[0.2em]">{c.l}</span>
-        </div>
-      ))}
+    <motion.div
+      initial={{ opacity: 0, y: 24, rotateX: -60 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ delay, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className="relative w-12 h-16 md:w-16 md:h-24"
+      style={{ transformStyle: "preserve-3d" }}
+    >
+      <div
+        className="absolute inset-0 flex items-center justify-center font-display tabular-nums leading-none text-4xl md:text-6xl overflow-hidden"
+        style={{
+          background: accent
+            ? "linear-gradient(180deg, #2a0000 0%, #0a0000 50%, #1a0000 50%, #000000 100%)"
+            : "linear-gradient(180deg, #1f1f1f 0%, #0a0a0a 50%, #141414 50%, #000000 100%)",
+          color: accent ? "#ff1744" : "#ffffff",
+          boxShadow: accent
+            ? "0 0 0 1px rgba(220,20,60,0.5), 0 12px 30px rgba(220,20,60,0.25), inset 0 0 22px rgba(220,20,60,0.18)"
+            : "0 0 0 1px rgba(255,255,255,0.08), 0 12px 30px rgba(0,0,0,0.6), inset 0 0 22px rgba(255,255,255,0.04)",
+          textShadow: accent
+            ? "0 0 14px rgba(255,23,68,0.9), 0 0 36px rgba(220,20,60,0.5)"
+            : "0 0 10px rgba(255,255,255,0.18)",
+        }}
+      >
+        {digit}
+        {/* horizontal split line — flip-clock seam */}
+        <div className="absolute top-1/2 left-0 right-0 h-px bg-black/80 z-10" />
+        {/* top shimmer */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px"
+          style={{
+            background: accent
+              ? "linear-gradient(90deg, transparent, rgba(255,23,68,0.9), transparent)"
+              : "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
+          }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
+function RecordStat({ label, value, accent, baseDelay }: { label: string; value: number; accent: boolean; baseDelay: number }) {
+  const digits = String(value).padStart(2, "0").split("");
+  return (
+    <div className="flex flex-col items-center gap-3 md:gap-4">
+      <div className="flex gap-1.5 md:gap-2" style={{ perspective: "800px" }}>
+        {digits.map((d, i) => (
+          <DigitBox key={i} digit={d} accent={accent} delay={baseDelay + i * 0.08} />
+        ))}
+      </div>
+      <div
+        className={`font-mono text-[10px] md:text-xs tracking-[0.35em] uppercase ${
+          accent ? "text-[#dc143c]" : "text-white/55"
+        }`}
+      >
+        {label}
+      </div>
     </div>
   );
 }
@@ -55,23 +79,47 @@ function getIcon(name: string): React.ComponentType<LucideProps> {
 }
 
 export function StatsBar({ stats, site }: Props) {
+  const record = [
+    { label: "WINS", value: site.record.wins, accent: false },
+    { label: "LOSSES", value: site.record.losses, accent: false },
+    { label: "DRAWS", value: site.record.draws, accent: false },
+    { label: "KO", value: site.record.knockouts, accent: true },
+    { label: "SUB", value: site.record.submissions, accent: true },
+  ];
+
   return (
     <section className="relative bg-black border-y border-[#dc143c]/30">
       <SectionDivider label={`THE NUMBERS / PROOF OF POWER`} number="// 01" />
 
-      {/* Next fight banner */}
-      {site.nextFightOpponent && (
-        <div className="bg-gradient-to-r from-black via-[#3a0000]/60 to-black border-b border-[#dc143c]/30 py-3 px-6">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-white/80">
-              <span className="inline-block w-2 h-2 bg-[#dc143c] rounded-full animate-pulse" />
-              NEXT WAR / <span className="text-[#dc143c]">{site.fighterName}</span> vs <span className="text-white font-display text-lg tracking-wider">{site.nextFightOpponent}</span>
-              {site.nextFightVenue && <span className="hidden md:inline text-white/40">@ {site.nextFightVenue}</span>}
+      {/* Record — scoreboard, each digit in its own box */}
+      <div className="relative border-b border-[#dc143c]/30 py-10 md:py-14 px-6 bg-gradient-to-b from-[#0a0000] via-black to-black overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_rgba(220,20,60,0.18),_transparent_60%)]" />
+
+        <div className="relative max-w-7xl mx-auto">
+          <Reveal>
+            <div className="flex items-center gap-3 mb-8 md:mb-10">
+              <span className="h-px w-10 bg-[#dc143c]" />
+              <span className="font-mono text-[10px] md:text-xs tracking-[0.4em] uppercase text-[#dc143c]">
+                FIGHT RECORD / OFFICIAL
+              </span>
+              <span className="h-px flex-1 max-w-[280px] bg-gradient-to-r from-[#dc143c] to-transparent" />
             </div>
-            <CountdownPill targetIso={site.nextFightDate} />
+          </Reveal>
+
+          <div className="flex flex-wrap items-start justify-center md:justify-between gap-6 md:gap-4 lg:gap-6">
+            {record.map((r, i) => (
+              <RecordStat
+                key={r.label}
+                label={r.label}
+                value={r.value}
+                accent={r.accent}
+                baseDelay={i * 0.1}
+              />
+            ))}
           </div>
         </div>
-      )}
+      </div>
 
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
         <Reveal>

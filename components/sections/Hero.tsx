@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { ArrowDown, Download, Zap } from "lucide-react";
 import Image from "next/image";
 
@@ -11,122 +11,57 @@ import type { Site, Social } from "@/lib/schemas";
 
 type Props = { site: Site; socials: Social[] };
 
-type StatCardProps = { label: string; value: number; accent: boolean; delay: number };
+function HeroCountdown({ targetIso }: { targetIso?: string }) {
+  const [target] = useState<number>(() => {
+    if (targetIso) {
+      const t = new Date(targetIso).getTime();
+      if (!Number.isNaN(t)) return t;
+    }
+    return Date.now() + 60 * 86400000;
+  });
+  const [diff, setDiff] = useState({ d: 60, h: 0, m: 0, s: 0 });
 
-function StatCard({ label, value, accent, delay }: StatCardProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [12, -12]), { stiffness: 400, damping: 25 });
-  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-12, 12]), { stiffness: 400, damping: 25 });
-
-  const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
-    const r = ref.current?.getBoundingClientRect();
-    if (!r) return;
-    mx.set((e.clientX - r.left) / r.width - 0.5);
-    my.set((e.clientY - r.top) / r.height - 0.5);
-  };
-
-  const handleLeave = () => { mx.set(0); my.set(0); };
+  useEffect(() => {
+    const tick = () => {
+      const delta = Math.max(0, target - Date.now());
+      setDiff({
+        d: Math.floor(delta / 86400000),
+        h: Math.floor((delta % 86400000) / 3600000),
+        m: Math.floor((delta % 3600000) / 60000),
+        s: Math.floor((delta % 60000) / 1000),
+      });
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [target]);
 
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouse}
-      onMouseLeave={handleLeave}
-      initial={{ opacity: 0, y: 40, rotateX: 60 }}
-      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ delay, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
-      className="relative cursor-default select-none"
-    >
-      {/* Main face */}
-      <div
-        className="relative px-5 py-4 overflow-hidden"
-        style={{
-          background: accent
-            ? "linear-gradient(135deg, rgba(139,0,0,0.35) 0%, rgba(10,0,0,0.95) 100%)"
-            : "linear-gradient(135deg, rgba(25,25,25,0.95) 0%, rgba(0,0,0,0.98) 100%)",
-          boxShadow: accent
-            ? "0 0 0 1px rgba(220,20,60,0.4), 0 12px 40px rgba(220,20,60,0.2), 0 4px 16px rgba(0,0,0,0.8)"
-            : "0 0 0 1px rgba(255,255,255,0.06), 0 12px 40px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.8)",
-        }}
-      >
-        {/* Top shimmer edge */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-
-        {/* Glint sweep on hover */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.07) 50%, transparent 60%)",
-            backgroundSize: "200% 100%",
-          }}
-          initial={{ backgroundPositionX: "200%" }}
-          whileHover={{ backgroundPositionX: "-100%" }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-        />
-
-        <div className="font-mono text-[9px] tracking-[0.35em] uppercase text-white/35 mb-2">
-          {label}
-        </div>
+    <div className="flex items-center gap-2 md:gap-3 font-mono">
+      {[
+        { v: diff.d, l: "DAYS" },
+        { v: diff.h, l: "HRS" },
+        { v: diff.m, l: "MIN" },
+        { v: diff.s, l: "SEC" },
+      ].map((c) => (
         <div
-          className="font-display text-4xl md:text-5xl lg:text-6xl tabular-nums leading-none"
-          style={{
-            color: accent ? "#dc143c" : "#ffffff",
-            textShadow: accent
-              ? "0 0 15px rgba(220,20,60,0.9), 0 0 40px rgba(220,20,60,0.5), 0 0 80px rgba(220,20,60,0.25)"
-              : "0 0 8px rgba(255,255,255,0.12)",
-          }}
+          key={c.l}
+          className="relative flex flex-col items-center bg-black/70 border border-[#dc143c]/50 px-3 py-2 md:px-4 md:py-3 min-w-[58px] md:min-w-[72px] backdrop-blur-sm"
+          style={{ boxShadow: "0 0 24px rgba(220,20,60,0.25), inset 0 0 12px rgba(220,20,60,0.08)" }}
         >
-          {value}
+          <span className="font-display text-2xl md:text-4xl tabular-nums text-white leading-none">
+            {String(c.v).padStart(2, "0")}
+          </span>
+          <span className="mt-1 text-[#dc143c] text-[9px] tracking-[0.25em]">{c.l}</span>
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#dc143c]/80 to-transparent" />
         </div>
-
-        {/* Bottom glow bar */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-[2px]"
-          style={{
-            background: accent
-              ? "linear-gradient(90deg, transparent, rgba(220,20,60,0.8), transparent)"
-              : "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
-          }}
-        />
-      </div>
-
-      {/* 3D depth — bottom face */}
-      <div
-        className="absolute left-0 right-0 bottom-0 h-[6px]"
-        style={{
-          background: accent ? "rgba(100,0,0,0.8)" : "rgba(15,15,15,0.9)",
-          transform: "rotateX(-90deg) translateZ(3px)",
-          transformOrigin: "bottom",
-          boxShadow: accent ? "0 4px 20px rgba(220,20,60,0.3)" : "0 4px 20px rgba(0,0,0,0.5)",
-        }}
-      />
-
-      {/* 3D depth — right face */}
-      <div
-        className="absolute top-0 right-0 w-[6px] bottom-0"
-        style={{
-          background: accent ? "rgba(80,0,0,0.7)" : "rgba(10,10,10,0.8)",
-          transform: "rotateY(90deg) translateZ(3px)",
-          transformOrigin: "right",
-        }}
-      />
-    </motion.div>
+      ))}
+    </div>
   );
 }
 
 export function Hero({ site }: Props) {
   const isYoutube = site.heroVideoUrl?.includes("youtube") || site.heroVideoUrl?.includes("youtu.be");
-
-  const stats = [
-    { label: "W", value: site.record.wins, accent: false },
-    { label: "L", value: site.record.losses, accent: false },
-    { label: "D", value: site.record.draws, accent: false },
-    { label: "KO", value: site.record.knockouts, accent: true },
-    { label: "SUB", value: site.record.submissions, accent: true },
-  ];
 
   return (
     <section className="relative min-h-[100svh] w-full overflow-hidden grain-overlay scanlines">
@@ -221,14 +156,49 @@ export function Hero({ site }: Props) {
             </motion.span>
           </div>
 
-          {/* 3D Record block */}
-          <div className="mt-6" style={{ perspective: "1400px" }}>
-            <div className="inline-flex gap-[2px]" style={{ transformStyle: "preserve-3d" }}>
-              {stats.map((s, i) => (
-                <StatCard key={s.label} {...s} delay={0.3 + i * 0.07} />
-              ))}
-            </div>
-          </div>
+          {/* NEXT WAR — emphasized banner */}
+          {site.nextFightOpponent && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-8 relative"
+            >
+              {/* Top label */}
+              <div className="flex items-center gap-3 mb-5">
+                <span className="inline-block w-2.5 h-2.5 bg-[#dc143c] rounded-full animate-pulse" style={{ boxShadow: "0 0 12px rgba(220,20,60,0.9)" }} />
+                <span className="font-mono text-[11px] md:text-xs tracking-[0.45em] uppercase text-[#dc143c]">NEXT WAR</span>
+                <span className="h-px w-16 md:w-24 bg-gradient-to-r from-[#dc143c]/80 to-transparent" />
+              </div>
+
+              {/* Fighter vs Opponent — both same size */}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-3 mb-6">
+                <span
+                  className="font-display text-3xl md:text-5xl lg:text-6xl tracking-wider text-[#dc143c] leading-none"
+                  style={{ textShadow: "0 0 24px rgba(220,20,60,0.7), 0 0 60px rgba(220,20,60,0.35)" }}
+                >
+                  {site.fighterName.toUpperCase()}
+                </span>
+                <span className="font-mono text-xs md:text-sm tracking-[0.4em] uppercase text-white/40">VS</span>
+                <span
+                  className="font-display text-3xl md:text-5xl lg:text-6xl tracking-wider text-white leading-none"
+                  style={{ textShadow: "0 0 16px rgba(255,255,255,0.2)" }}
+                >
+                  {site.nextFightOpponent.toUpperCase()}
+                </span>
+              </div>
+
+              {/* Venue + Countdown */}
+              <div className="flex flex-wrap items-center gap-4 md:gap-6">
+                <HeroCountdown targetIso={site.nextFightDate} />
+                {site.nextFightVenue && (
+                  <div className="font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase text-white/50">
+                    @ <span className="text-white/80">{site.nextFightVenue}</span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
 
           {/* Tagline */}
           <motion.p
