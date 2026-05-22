@@ -24,7 +24,8 @@
       "Bash(curl -sS -o nul -w \"/admin/login: HTTP %{http_code}\\\\n\" http://localhost:3000/admin/login)",
       "Bash(curl -sS -o nul -w \"/api/leads \\(GET\\): HTTP %{http_code}\\\\n\" http://localhost:3000/api/leads)",
       "Bash(curl -sS -X POST -H \"Content-Type: application/json\" -d \"{\\\\\"invalid\\\\\":true}\" -o nul -w \"/api/leads \\(bad POST\\): HTTP %{http_code}\\\\n\" http://localhost:3000/api/leads)",
-      "Bash(grep -oE '\\(\"?\\(\\\\$?\\(14\\\\.8M|2\\\\.4M|47M|1\\\\.8M|14,800,000|2,400,000|47,000,000|1,800,000\\)\"?\\)|truncate|tabular-nums\\)')"
+      "Bash(grep -oE '\\(\"?\\(\\\\$?\\(14\\\\.8M|2\\\\.4M|47M|1\\\\.8M|14,800,000|2,400,000|47,000,000|1,800,000\\)\"?\\)|truncate|tabular-nums\\)')",
+      "Bash(firebase login:list)"
     ]
   }
 }
